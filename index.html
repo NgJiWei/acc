@@ -62,8 +62,27 @@ progress{
     margin-bottom:25px;
 }
 
-.card{
-    min-height:220px;
+/* Flip Card Container */
+.flip-card-container{
+    perspective: 1000px;
+    margin-bottom:20px;
+}
+.flip-card{
+    min-height:280px;
+    position: relative;
+    width:100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+.flip-card.flipped{
+    transform: rotateY(180deg);
+}
+.card-front, .card-back{
+    position:absolute;
+    width:100%;
+    height:100%;
+    backface-visibility: hidden;
     display:flex;
     justify-content:center;
     align-items:center;
@@ -72,18 +91,17 @@ progress{
     border:2px dashed #bbb;
     border-radius:10px;
     padding:20px;
-    margin-bottom:20px;
 }
-
-#answer{
-    display:none;
-    font-size:16px;
+.card-front{
+    background:#fff;
+    z-index: 2;
+}
+.card-back{
+    background:#f0faf8;
     color:#00695c;
-    margin-bottom:20px;
+    transform: rotateY(180deg);
     text-align:left;
-    padding:10px;
-    border:1px solid #c6e5e0;
-    border-radius:8px;
+    overflow-y:auto;
 }
 
 .buttons{
@@ -97,16 +115,39 @@ progress{
 .buttons button{
     padding:12px 18px;
     cursor:pointer;
+    font-size:16px;
 }
 
 .navigation{
     display:flex;
     justify-content:space-between;
+    margin-bottom:20px;
 }
 
 .navigation button{
     padding:12px 25px;
     cursor:pointer;
+}
+
+#summaryPanel{
+    margin-top:30px;
+    padding:20px;
+    border:1px solid #ddd;
+    border-radius:10px;
+}
+#summaryPanel h3{
+    margin-bottom:10px;
+}
+#summaryList{
+    max-height:300px;
+    overflow-y:auto;
+    padding-left:15px;
+}
+.known-item{
+    color:#008833;
+}
+.unknown-item{
+    color:#cc2222;
 }
 </style>
 </head>
@@ -132,21 +173,32 @@ progress{
 
     <progress id="progress" value="1" max="29"></progress>
 
-    <div class="card" id="question"></div>
-
-    <div id="answer"></div>
+    <!-- Flip Card Area -->
+    <div class="flip-card-container">
+        <div class="flip-card" id="flipCard" onclick="flipCard()">
+            <div class="card-front" id="question"></div>
+            <div class="card-back" id="answer"></div>
+        </div>
+    </div>
 
     <div class="buttons">
-        <button onclick="toggleAnswer()">Show Answer</button>
-        <button>❌ Again</button>
-        <button>😐 Hard</button>
-        <button>✅ Good</button>
-        <button>⭐ Easy</button>
+        <button onclick="markUnknown()">❌ Don't Know</button>
+        <button onclick="markKnown()">✅ Know</button>
+        <button onclick="openSummary()">📋 View Review Summary</button>
     </div>
 
     <div class="navigation">
         <button onclick="previousCard()">◀ Previous</button>
         <button onclick="nextCard()">Next ▶</button>
+    </div>
+
+    <!-- Summary Panel Hidden By Default -->
+    <div id="summaryPanel" style="display:none;">
+        <h3>Review Summary (Current Deck)</h3>
+        <div id="summaryList"></div>
+        <div style="margin-top:15px;text-align:center;">
+            <button onclick="closeSummary()">Close Summary</button>
+        </div>
     </div>
 
 </div>
@@ -160,11 +212,11 @@ const decks=[
 [
     {
         q:"Describe the core difference between financial accounting and management accounting’s core question they answer",
-        a:"Financial accounting answers 'What already happened?' (historical transactions for external users); Management accounting answers 'What should we do next?' (future planning for internal managers)"
+        a:"Financial accounting answers 'What already happened?' (historical transactions for external users)<br>Management accounting answers 'What should we do next?' (future planning for internal managers)"
     },
     {
         q:"List the key characteristics of financial accounting",
-        a:"1. Records only completed/past business transactions; 2. Produces reports for external users (investors, banks, tax authorities); 3. Must follow formal accounting standards/concepts (accrual, prudence, consistency); 4. Standard annual reporting cycle; 5. Views whole business as single entity"
+        a:"1. Records only completed/past business transactions<br>2. Produces reports for external users (investors, banks, tax authorities)<br>3. Must follow formal accounting standards/concepts (accrual, prudence, consistency)<br>4. Standard annual reporting cycle<br>5. Views whole business as single entity"
     },
     {
         q:"Define management accounting",
@@ -172,107 +224,107 @@ const decks=[
     },
     {
         q:"Name internal user groups of management accounting and their key decisions",
-        a:"1. Senior Managers: Product pricing, annual budgeting, cost control strategies; 2. Department Supervisors: Allocate limited company resources fairly; 3. Business Owners: Expansion plans, launch/discontinue products; 4. Department Heads: Evaluate team/department performance against targets"
+        a:"1. Senior Managers: Product pricing, annual budgeting, cost control strategies<br>2. Department Supervisors: Allocate limited company resources fairly<br>3. Business Owners: Expansion plans, launch/discontinue products<br>4. Department Heads: Evaluate team/department performance against targets"
     },
     {
         q:"Compare financial accounting vs management accounting across 6 key dimensions",
-        a:"1. Audience: Financial = external parties; Management = internal managers/owners/staff\n2. Time focus: Financial = historical past performance; Management = forecasting/future decisions\n3. Rules: Financial = mandatory accounting standards; Management = flexible, no fixed rules\n4. Reporting timing: Financial = fixed annual cycle; Management = on-demand, monthly/weekly\n5. Business scope: Financial = entire business; Management = split by departments/products/projects\n6. Mandatory status: Financial = legally required; Management = optional internal tool"
+        a:"1. Audience: Financial = external parties; Management = internal managers/owners/staff<br>2. Time focus: Financial = historical past performance; Management = forecasting/future decisions<br>3. Rules: Financial = mandatory accounting standards; Management = flexible, no fixed rules<br>4. Reporting timing: Financial = fixed annual cycle; Management = on-demand, monthly/weekly<br>5. Business scope: Financial = entire business; Management = split by departments/products/projects<br>6. Mandatory status: Financial = legally required; Management = optional internal tool"
     },
     {
         q:"Define cost accounting and state its relationship to management accounting",
-        a:"Cost accounting is a specialised sub-branch of management accounting; its core focus is identifying, measuring, tracking and controlling all business costs"
+        a:"Cost accounting is a specialised sub-branch of management accounting<br>Its core focus is identifying, measuring, tracking and controlling all business costs"
     },
     {
         q:"List the seven core purposes of management and cost accounting",
-        a:"1. Plan future business activities via budgets/forecasts; 2. Monitor and control all business costs; 3. Set appropriate selling prices for goods/services; 4. Measure departmental, product and company-wide performance; 5. Support strategic and short-term business decisions; 6. Calculate inventory value and Cost of Goods Sold (COGS); 7. Improve operational efficiency and long-term profitability"
+        a:"1. Plan future business activities via budgets/forecasts<br>2. Monitor and control all business costs<br>3. Set appropriate selling prices for goods/services<br>4. Measure departmental, product and company-wide performance<br>5. Support strategic and short-term business decisions<br>6. Calculate inventory value and Cost of Goods Sold (COGS)<br>7. Improve operational efficiency and long-term profitability"
     },
     {
         q:"List core management accounting techniques and their core purpose each",
-        a:"1. Budgeting: Create formal future income & expense plans; 2. Variance Analysis: Compare actual results vs budget targets; 3. CVP Analysis: Map relationship between costs, sales volume and profit; 4. Relevant Costing: Filter critical data for short-term operational decisions; 5. Product Costing: Calculate full manufacturing cost per finished unit; 6. Inventory Valuation: Assign value to unsold inventory and compute COGS"
+        a:"1. Budgeting: Create formal future income & expense plans<br>2. Variance Analysis: Compare actual results vs budget targets<br>3. CVP Analysis: Map relationship between costs, sales volume and profit<br>4. Relevant Costing: Filter critical data for short-term operational decisions<br>5. Product Costing: Calculate full manufacturing cost per finished unit<br>6. Inventory Valuation: Assign value to unsold inventory and compute COGS"
     },
     {
         q:"Define direct cost and give an example",
-        a:"Costs fully traced directly to one finished product; Example: Fabric used to make a single shirt"
+        a:"Costs fully traced directly to one finished product<br>Example: Fabric used to make a single shirt"
     },
     {
         q:"Define indirect cost and give an example",
-        a:"Shared costs that cannot be traced to one specific product; Example: Factory electricity bills"
+        a:"Shared costs that cannot be traced to one specific product<br>Example: Factory electricity bills"
     },
     {
         q:"Define fixed cost and give an example",
-        a:"Cost total stays constant regardless of production volume; Example: Annual factory building rent"
+        a:"Cost total stays constant regardless of production volume<br>Example: Annual factory building rent"
     },
     {
         q:"Define variable cost and give an example",
-        a:"Total cost rises/falls directly with production quantity, per-unit cost unchanged; Example: Raw material inputs for production"
+        a:"Total cost rises/falls directly with production quantity, per-unit cost unchanged<br>Example: Raw material inputs for production"
     },
     {
         q:"Define product cost and its components",
-        a:"All costs incurred during manufacturing; Components: Direct materials, direct labour, factory overheads"
+        a:"All costs incurred during manufacturing<br>Components: Direct materials, direct labour, factory overheads"
     },
     {
         q:"Define period cost and give examples",
-        a:"Costs unrelated to factory manufacturing; Examples: Selling expenses, administrative office costs"
+        a:"Costs unrelated to factory manufacturing<br>Examples: Selling expenses, administrative office costs"
     },
     {
         q:"Explain job costing system, use case and examples",
-        a:"Used when every product/service is fully customised; calculate separate total cost for each individual job/order; Examples: Wedding planner, interior designer, printing company, tailor"
+        a:"Used when every product/service is fully customised<br>Calculate separate total cost for each individual job/order<br>Examples: Wedding planner, interior designer, printing company, tailor"
     },
     {
         q:"Explain process costing system, use case and examples",
-        a:"Used for mass production of identical uniform products; calculate total production cost then divide by total units produced; Examples: Soft drinks, petrol, cement, shampoo"
+        a:"Used for mass production of identical uniform products<br>Calculate total production cost then divide by total units produced<br>Examples: Soft drinks, petrol, cement, shampoo"
     },
     {
         q:"Briefly define marginal costing and absorption costing",
-        a:"Marginal costing: Only analyses variable production costs for short-term operational decisions; Absorption costing: Absorbs all manufacturing costs (direct materials, labour, variable + fixed factory overheads) into each product unit"
+        a:"Marginal costing: Only analyses variable production costs for short-term operational decisions<br>Absorption costing: Absorbs all manufacturing costs (direct materials, labour, variable + fixed factory overheads) into each product unit"
     },
     {
         q:"List advantages of management accounting",
-        a:"1. Provides clear data for informed business decisions; 2. Supports long-term planning via budgets and forecasts; 3. Enables strict cost monitoring and waste reduction; 4. Guides product pricing and product line decisions; 5. Measures team, department and overall company performance"
+        a:"1. Provides clear data for informed business decisions<br>2. Supports long-term planning via budgets and forecasts<br>3. Enables strict cost monitoring and waste reduction<br>4. Guides product pricing and product line decisions<br>5. Measures team, department and overall company performance"
     },
     {
         q:"List disadvantages of management accounting",
-        a:"1. Much data depends on estimates and forecasts; 2. Creating custom internal reports consumes significant employee time; 3. Specialised management accounting software/systems create extra business costs; 4. No universal standardised report format; 5. Incorrect data interpretation can lead to wrong business decisions"
+        a:"1. Much data depends on estimates and forecasts<br>2. Creating custom internal reports consumes significant employee time<br>3. Specialised management accounting software/systems create extra business costs<br>4. No universal standardised report format<br>5. Incorrect data interpretation can lead to wrong business decisions"
     },
     {
         q:"List advantages of cost accounting",
-        a:"1. Accurately calculates full production cost per unit; 2. Delivers reliable data for pricing decisions; 3. Identifies wasteful spending and supports cost control; 4. Distinguishes profitable vs unprofitable product lines; 5. Calculates accurate inventory value and COGS"
+        a:"1. Accurately calculates full production cost per unit<br>2. Delivers reliable data for pricing decisions<br>3. Identifies wasteful spending and supports cost control<br>4. Distinguishes profitable vs unprofitable product lines<br>5. Calculates accurate inventory value and COGS"
     },
     {
         q:"List disadvantages of cost accounting",
-        a:"1. Collecting detailed cost data is time-intensive; 2. System implementation and regular maintenance add extra expenses; 3. Some overhead costs are difficult to classify accurately; 4. Many overhead allocations rely on estimated figures; 5. Over-focus on cutting costs may damage finished product quality"
+        a:"1. Collecting detailed cost data is time-intensive<br>2. System implementation and regular maintenance add extra expenses<br>3. Some overhead costs are difficult to classify accurately<br>4. Many overhead allocations rely on estimated figures<br>5. Over-focus on cutting costs may damage finished product quality"
     },
     {
         q:"Differentiate manufacturing business and trading business, including inventory types",
-        a:"Manufacturing: Buys raw materials, transforms into finished goods; inventory = raw materials, work-in-progress (WIP), finished goods (e.g. Nestlé, Toyota); Trading: Purchases finished goods and resells without modification; only merchandise inventory (e.g. Mydin, Walmart)"
+        a:"Manufacturing: Buys raw materials, transforms into finished goods<br>Inventory = raw materials, work-in-progress (WIP), finished goods (e.g. Nestlé, Toyota)<br>Trading: Purchases finished goods and resells without modification<br>Only merchandise inventory (e.g. Mydin, Walmart)"
     },
     {
         q:"Define four manufacturing cost categories plus non-production overheads with desk furniture examples",
-        a:"1. Direct Materials: Traceable raw inputs (timber, screws for desks); 2. Direct Labour: Wages for workers making products (carpenter hourly wages); 3. Direct Expenses: One-off traceable job costs (custom desk design fee); 4. Indirect Production Overheads: Shared factory costs (factory electricity, machine depreciation, factory supervisor salary); Non-Production Overheads: Non-factory support costs (office rent, admin wages, marketing)"
+        a:"1. Direct Materials: Traceable raw inputs (timber, screws for desks)<br>2. Direct Labour: Wages for workers making products (carpenter hourly wages)<br>3. Direct Expenses: One-off traceable job costs (custom desk design fee)<br>4. Indirect Production Overheads: Shared factory costs (factory electricity, machine depreciation, factory supervisor salary)<br>Non-Production Overheads: Non-factory support costs (office rent, admin wages, marketing)"
     },
     {
         q:"Show the full product cost calculation formula for manufacturing",
-        a:"Total Direct Costs (Direct Materials + Direct Labour + Direct Expenses) + Total Indirect Production Overheads = Total Product Cost; Cost per unit = Total Product Cost ÷ Total manufactured units"
+        a:"Total Direct Costs (Direct Materials + Direct Labour + Direct Expenses) + Total Indirect Production Overheads = Total Product Cost<br>Cost per unit = Total Product Cost ÷ Total manufactured units"
     },
     {
         q:"State the rule for period costs in inventory valuation",
-        a:"Non-production overheads (office rent, admin salaries, marketing) are period costs and are never included in inventory valuation; expensed immediately in the income statement"
+        a:"Non-production overheads (office rent, admin salaries, marketing) are period costs<br>They are never included in inventory valuation and expensed immediately in the income statement"
     },
     {
         q:"Explain the link between product costing and inventory valuation outcomes for manufactured goods",
-        a:"After calculating unit product cost: 1. Sold goods: Production cost becomes COGS on the Income Statement; 2. Unsold goods: Production cost remains as Closing Inventory asset on the Balance Sheet"
+        a:"After calculating unit product cost:<br>1. Sold goods: Production cost becomes COGS on the Income Statement<br>2. Unsold goods: Production cost remains as Closing Inventory asset on the Balance Sheet"
     },
     {
         q:"Explain FIFO inventory valuation method",
-        a:"First-In-First-Out; assumes the oldest purchased inventory units are sold first; newest purchased units remain as closing inventory"
+        a:"First-In-First-Out<br>Assumes the oldest purchased inventory units are sold first<br>Newest purchased units remain as closing inventory"
     },
     {
         q:"Explain Weighted Average Cost (AVCO) inventory valuation method",
-        a:"Calculate a single uniform average cost per unit for all available inventory; this average cost is applied to both sold goods (COGS) and unsold closing inventory"
+        a:"Calculate a single uniform average cost per unit for all available inventory<br>This average cost is applied to both sold goods (COGS) and unsold closing inventory"
     },
     {
         q:"What financial line items are directly impacted by inventory valuation methods?",
-        a:"Cost of Goods Sold (COGS), Closing Inventory balance on the Balance Sheet, and Net Profit on the Income Statement"
+        a:"1. Cost of Goods Sold (COGS)<br>2. Closing Inventory balance on the Balance Sheet<br>3. Net Profit on the Income Statement"
     }
 ],
 // Set 2: Lecture7 Accounting for Overheads
@@ -283,58 +335,58 @@ const decks=[
     },
     {
         q:"State the core principle of traditional overhead absorption costing",
-        a:"Overheads cannot be directly attached to products but are part of full production cost; every product receives a fair share of overhead using one single universal absorption basis"
+        a:"Overheads cannot be directly attached to products but are part of full production cost<br>Every product receives a fair share of overhead using one single universal absorption basis"
     },
     {
         q:"List three common overhead absorption bases and their suitable production environments",
-        a:"1. Machine hours: Machine-intensive manufacturing; 2. Labour hours: Labour-intensive manufacturing; 3. Units produced: All products identical/similar mass goods"
+        a:"1. Machine hours: Machine-intensive manufacturing<br>2. Labour hours: Labour-intensive manufacturing<br>3. Units produced: All products identical/similar mass goods"
     },
     {
         q:"Write the three-step calculation logic for traditional overhead absorption costing",
-        a:"1. Overhead Absorption Rate = Total budgeted overhead ÷ Total budgeted allocation base; 2. Absorbed overhead per product = Actual usage of allocation base × Absorption rate; 3. Full product cost = Direct materials + Direct labour + Absorbed overhead"
+        a:"1. Overhead Absorption Rate = Total budgeted overhead ÷ Total budgeted allocation base<br>2. Absorbed overhead per product = Actual usage of allocation base × Absorption rate<br>3. Full product cost = Direct materials + Direct labour + Absorbed overhead"
     },
     {
         q:"What is the major limitation of traditional single-base absorption costing?",
-        a:"Uses one broad allocation rule for all overheads; simple mass-produced and complex custom products consume vastly different support activities but absorb identical overhead based only on machine/labour hours, causing distorted, inaccurate product costs"
+        a:"Uses one broad allocation rule for all overheads<br>Simple mass-produced and complex custom products consume vastly different support activities but absorb identical overhead based only on machine/labour hours, causing distorted, inaccurate product costs"
     },
     {
         q:"State the core logic of Activity-Based Costing (ABC)",
-        a:"Products consume activities; activities consume resources; overheads are driven by separate production support activities rather than only machine/labour hours, so overheads are split by each activity for precise allocation"
+        a:"Products consume activities; activities consume resources<br>Overheads are driven by separate production support activities rather than only machine/labour hours<br>Overheads split by each activity for precise allocation"
     },
     {
         q:"Define ABC terminology: Activity, Cost pool, Cost driver, Cost driver rate with cake business example",
-        a:"1. Activity: Resource-consuming production task (cake decoration); 2. Cost pool: Total overhead grouped for one activity (RM18,000 decoration overhead); 3. Cost driver: Factor triggering higher activity costs (number of decoration hours); 4. Cost driver rate: Overhead cost per driver unit (RM30 per decoration hour)"
+        a:"1. Activity: Resource-consuming production task (cake decoration)<br>2. Cost pool: Total overhead grouped for one activity (RM18,000 decoration overhead)<br>3. Cost driver: Factor triggering higher activity costs (number of decoration hours)<br>4. Cost driver rate: Overhead cost per driver unit (RM30 per decoration hour)"
     },
     {
         q:"List common production activities and their matching cost drivers for ABC",
-        a:"1. Machine setup – Number of production setups; 2. Quality inspection – Number of inspection rounds; 3. Material handling – Number of material transport movements; 4. Customer order processing – Number of customer orders; 5. Custom packaging design – Number of custom design requests"
+        a:"1. Machine setup – Number of production setups<br>2. Quality inspection – Number of inspection rounds<br>3. Material handling – Number of material transport movements<br>4. Customer order processing – Number of customer orders<br>5. Custom packaging design – Number of custom design requests"
     },
     {
         q:"List the five step-by-step process to implement ABC costing",
-        a:"1. Identify all key production support activities; 2. Group related overhead expenses into separate activity cost pools; 3. Identify the cost driver for each activity pool; 4. Calculate cost driver rate = Total cost pool ÷ Total driver units; 5. Allocate overhead to each product based on actual driver units consumed by the product"
+        a:"1. Identify all key production support activities<br>2. Group related overhead expenses into separate activity cost pools<br>3. Identify the cost driver for each activity pool<br>4. Calculate cost driver rate = Total cost pool ÷ Total driver units<br>5. Allocate overhead to each product based on actual driver units consumed by the product"
     },
     {
         q:"Explain the cost distortion difference between traditional costing and ABC using standard vs premium candles as example",
-        a:"Classic mass candle: Few setups/inspections, consumes little support activity; Premium custom candle: Frequent setups, extra inspections, high resource consumption. Traditional costing allocates equal overhead to both, undercosting premium candles and overcosting standard candles. ABC assigns higher overhead to premium candles matching real resource usage, producing accurate unit costs."
+        a:"Classic mass candle: Few setups/inspections, consumes little support activity<br>Premium custom candle: Frequent setups, extra inspections, high resource consumption<br>Traditional costing allocates equal overhead to both, undercosting premium candles and overcosting standard candles<br>ABC assigns higher overhead to premium candles matching real resource usage, producing accurate unit costs."
     },
     {
         q:"List advantages of Activity-Based Costing (ABC)",
-        a:"1. Produces far more accurate product cost figures; 2. Supports better product pricing decisions; 3. Clearly identifies high-profit and low-profit product lines; 4. Reveals which activities cause overhead spending; 5. Enables tighter cost control and improved operational decisions"
+        a:"1. Produces far more accurate product cost figures<br>2. Supports better product pricing decisions<br>3. Clearly identifies high-profit and low-profit product lines<br>4. Reveals which activities cause overhead spending<br>5. Enables tighter cost control and improved operational decisions"
     },
     {
         q:"List disadvantages/criticisms of Activity-Based Costing (ABC)",
-        a:"1. Time-consuming to design, build and implement; 2. Requires large volumes of detailed activity data collection; 3. High initial implementation and ongoing maintenance costs; 4. Employees may resist complex new costing systems; 5. Overly complicated and not cost-effective for small/simple businesses"
+        a:"1. Time-consuming to design, build and implement<br>2. Requires large volumes of detailed activity data collection<br>3. High initial implementation and ongoing maintenance costs<br>4. Employees may resist complex new costing systems<br>5. Overly complicated and not cost-effective for small/simple businesses"
     },
     {
         q:"Summarise the key contrast between traditional absorption costing and ABC",
-        a:"Traditional absorption costing uses one broad uniform allocation base for all overheads, simple but inaccurate for mixed product ranges; ABC splits overheads into separate activities with unique cost drivers for precise allocation, accurate but complex and costly to operate"
+        a:"Traditional absorption costing uses one broad uniform allocation base for all overheads, simple but inaccurate for mixed product ranges<br>ABC splits overheads into separate activities with unique cost drivers for precise allocation, accurate but complex and costly to operate"
     }
 ],
 // Set3: Lecture8 Marginal Costing
 [
     {
         q:"How does marginal costing differ from absorption costing in treating fixed factory overheads as product/period costs?",
-        a:"Marginal costing: Only variable production costs are product costs; fixed production overheads are fully expensed as period costs in the current period. Absorption costing: All manufacturing costs (variable + fixed factory overhead) are product costs; fixed overhead is absorbed into unit inventory value."
+        a:"Marginal costing: Only variable production costs are product costs; fixed production overheads are fully expensed as period costs in the current period.<br>Absorption costing: All manufacturing costs (variable + fixed factory overhead) are product costs; fixed overhead is absorbed into unit inventory value."
     },
     {
         q:"What is the primary use case for marginal costing?",
@@ -342,35 +394,35 @@ const decks=[
     },
     {
         q:"Describe cost behaviour rule for fixed costs and unit cost movement with output change",
-        a:"Total fixed cost stays unchanged within a relevant range; fixed cost per unit falls as production output rises; Examples: Factory rent, permanent supervisor salary, straight-line factory depreciation, factory insurance"
+        a:"Total fixed cost stays unchanged within a relevant range<br>Fixed cost per unit falls as production output rises<br>Examples: Factory rent, permanent supervisor salary, straight-line factory depreciation, factory insurance"
     },
     {
         q:"Describe cost behaviour rule for variable costs and unit cost movement with output change",
-        a:"Variable cost per unit remains constant; total variable cost rises proportionally with production volume; Examples: Direct materials, piece-rate direct labour, packaging materials, per-unit sales commission"
+        a:"Variable cost per unit remains constant<br>Total variable cost rises proportionally with production volume<br>Examples: Direct materials, piece-rate direct labour, packaging materials, per-unit sales commission"
     },
     {
         q:"Define mixed (semi-variable) costs, give formula and example",
-        a:"Costs containing both fixed base charge and variable usage component; Formula: Total mixed cost = Fixed element + (Variable rate × Activity volume); Example: Machine maintenance = RM2,000 fixed + RM3 per machine hour"
+        a:"Costs containing both fixed base charge and variable usage component<br>Formula: Total mixed cost = Fixed element + (Variable rate × Activity volume)<br>Example: Machine maintenance = RM2,000 fixed + RM3 per machine hour"
     },
     {
         q:"Define total contribution and its purpose",
-        a:"Contribution = Sales Revenue − Total Variable Costs; Purpose: Contribution first covers all total fixed costs; any remaining amount becomes net profit"
+        a:"Contribution = Sales Revenue − Total Variable Costs<br>Purpose: Contribution first covers all total fixed costs; any remaining amount becomes net profit"
     },
     {
         q:"Give formulas for contribution per unit and contribution margin ratio",
-        a:"Contribution per unit = Selling price per unit − Variable cost per unit; Contribution Margin Ratio = (Total Contribution ÷ Total Sales) × 100%"
+        a:"Contribution per unit = Selling price per unit − Variable cost per unit<br>Contribution Margin Ratio = (Total Contribution ÷ Total Sales) × 100%"
     },
     {
         q:"Explain how sales volume changes impact net profit using contribution logic",
-        a:"Every unit sold generates fixed contribution margin per unit. When total contribution equals total fixed costs, business hits break-even (zero profit/loss). Once fixed costs are fully covered, every extra unit sold adds its full contribution directly to net profit. If total contribution is less than fixed costs, net loss occurs."
+        a:"Every unit sold generates fixed contribution margin per unit.<br>When total contribution equals total fixed costs, business hits break-even (zero profit/loss).<br>Once fixed costs are fully covered, every extra unit sold adds its full contribution directly to net profit.<br>If total contribution is less than fixed costs, net loss occurs."
     },
     {
         q:"List product cost components under marginal costing",
-        a:"Only variable production costs: Direct materials, direct labour, variable production overhead"
+        a:"Only variable production costs:<br>Direct materials, direct labour, variable production overhead"
     },
     {
         q:"List product cost components under absorption costing",
-        a:"All manufacturing costs: Direct materials, direct labour, variable production overhead, fixed production overhead"
+        a:"All manufacturing costs:<br>Direct materials, direct labour, variable production overhead, fixed production overhead"
     },
     {
         q:"Outline the income statement structure for marginal costing",
@@ -382,7 +434,7 @@ const decks=[
     },
     {
         q:"Compare marginal costing and absorption costing across inventory valuation value, profit drivers, primary usage and key performance metric",
-        a:"1. Inventory value: Marginal = lower; Absorption = higher\n2. Profit drivers: Marginal = only units sold; Absorption = both units produced AND sold\n3. Primary usage: Marginal = internal short-term decisions; Absorption = external financial reporting, full-cost pricing\n4. Key metric: Marginal = contribution margin; Absorption = gross profit"
+        a:"1. Inventory value: Marginal = lower; Absorption = higher<br>2. Profit drivers: Marginal = only units sold; Absorption = both units produced AND sold<br>3. Primary usage: Marginal = internal short-term decisions; Absorption = external financial reporting, full-cost pricing<br>4. Key metric: Marginal = contribution margin; Absorption = gross profit"
     },
     {
         q:"What is the sole root cause of profit differences between marginal and absorption costing?",
@@ -390,92 +442,137 @@ const decks=[
     },
     {
         q:"Explain profit comparison under three production vs sales volume scenarios for marginal vs absorption costing",
-        a:"1. Production > Sales: Absorption costing higher profit (fixed overhead locked into closing inventory asset); 2. Production < Sales: Marginal costing higher profit (absorption releases fixed overhead from opening inventory into COGS); 3. Production = Sales: Both costing methods report identical net profit"
+        a:"1. Production > Sales: Absorption costing higher profit (fixed overhead locked into closing inventory asset)<br>2. Production < Sales: Marginal costing higher profit (absorption releases fixed overhead from opening inventory into COGS)<br>3. Production = Sales: Both costing methods report identical net profit"
     },
     {
         q:"List advantages of marginal costing",
-        a:"1. Clearly displays contribution margin for short-term operational decisions; 2. Directly shows how sales volume changes affect net profit; 3. Ideal tool for break-even and CVP analysis; 4. Avoids hiding fixed overhead expenses inside inventory asset balances"
+        a:"1. Clearly displays contribution margin for short-term operational decisions<br>2. Directly shows how sales volume changes affect net profit<br>3. Ideal tool for break-even and CVP analysis<br>4. Avoids hiding fixed overhead expenses inside inventory asset balances"
     },
     {
         q:"List limitations of marginal costing",
-        a:"1. Simplifies complex real-world cost behaviour patterns; 2. Difficult to accurately split mixed costs into fixed and variable components; 3. Not compliant with external financial reporting accounting standards; 4. Ignores fixed overhead costs when making long-term product pricing decisions"
+        a:"1. Simplifies complex real-world cost behaviour patterns<br>2. Difficult to accurately split mixed costs into fixed and variable components<br>3. Not compliant with external financial reporting accounting standards<br>4. Ignores fixed overhead costs when making long-term product pricing decisions"
     },
     {
         q:"List advantages of absorption costing",
-        a:"1. Captures full complete manufacturing cost per product unit; 2. Complies with formal accounting standards for external financial statements; 3. Supports full-cost pricing strategies to recover all factory overhead expenses"
+        a:"1. Captures full complete manufacturing cost per product unit<br>2. Complies with formal accounting standards for external financial statements<br>3. Supports full-cost pricing strategies to recover all factory overhead expenses"
     },
     {
         q:"List limitations of absorption costing",
-        a:"1. Net profit can be artificially inflated by overproducing and stockpiling inventory; 2. Risk of over-absorption or under-absorption of fixed factory overhead; 3. Less useful for short-term operational, volume-based business decisions"
+        a:"1. Net profit can be artificially inflated by overproducing and stockpiling inventory<br>2. Risk of over-absorption or under-absorption of fixed factory overhead<br>3. Less useful for short-term operational, volume-based business decisions"
     }
 ]
 ];
 
 let currentDeck=0;
 let currentCard=0;
+// Track user knowledge status per deck: {cardIndex: "known"/"unknown"}
+let deckProgress = [[], [], []];
+let isFlipped = false;
+
+const deckTitles = [
+    "Set 1: Lecture 6 Management & Cost Accounting",
+    "Set 2: Lecture 7 Accounting for Overheads",
+    "Set 3: Lecture 8 Marginal Costing"
+];
 
 function updateCard(){
-
     const deck=decks[currentDeck];
-    const deckTitles = [
-        "Set 1: Lecture 6 Management & Cost Accounting",
-        "Set 2: Lecture 7 Accounting for Overheads",
-        "Set 3: Lecture 8 Marginal Costing"
-    ];
-
     document.getElementById("deckName").innerHTML=deckTitles[currentDeck];
-
-    document.getElementById("counter").innerHTML=
-    (currentCard+1)+" / "+deck.length;
-
+    document.getElementById("counter").innerHTML=(currentCard+1)+" / "+deck.length;
     document.getElementById("progress").max=deck.length;
     document.getElementById("progress").value=currentCard+1;
 
-    document.getElementById("question").innerHTML=
-    deck[currentCard].q;
+    // Reset flip state
+    isFlipped = false;
+    document.getElementById("flipCard").classList.remove("flipped");
 
-    document.getElementById("answer").innerHTML=
-    deck[currentCard].a.replaceAll("\n","<br>");
+    document.getElementById("question").innerHTML=deck[currentCard].q;
+    document.getElementById("answer").innerHTML=deck[currentCard].a;
 
-    document.getElementById("answer").style.display="none";
-
+    // Hide summary panel on card change
+    document.getElementById("summaryPanel").style.display="none";
 }
 
-function toggleAnswer(){
+// Flip card on click
+function flipCard(){
+    isFlipped = !isFlipped;
+    const cardEl = document.getElementById("flipCard");
+    if(isFlipped){
+        cardEl.classList.add("flipped");
+    }else{
+        cardEl.classList.remove("flipped");
+    }
+}
 
-    let ans=document.getElementById("answer");
+// Mark current card as Known
+function markKnown(){
+    deckProgress[currentDeck][currentCard] = "known";
+    alert("Marked as ✅ Know");
+}
 
-    if(ans.style.display==="none")
-        ans.style.display="block";
-    else
-        ans.style.display="none";
+// Mark current card as Don't Know
+function markUnknown(){
+    deckProgress[currentDeck][currentCard] = "unknown";
+    alert("Marked as ❌ Don't Know");
+}
 
+// Open summary list
+function openSummary(){
+    const deck = decks[currentDeck];
+    const listEl = document.getElementById("summaryList");
+    listEl.innerHTML = "";
+    let knownCount = 0;
+    let unknownCount = 0;
+    let unmarkedCount = 0;
+
+    for(let i=0; i<deck.length; i++){
+        const status = deckProgress[currentDeck][i];
+        const item = document.createElement("div");
+        item.style.margin="6px 0";
+        if(status === "known"){
+            item.className = "known-item";
+            item.innerHTML = `${i+1}. ✅ ${deck[i].q.substring(0,60)}...`;
+            knownCount++;
+        }else if(status === "unknown"){
+            item.className = "unknown-item";
+            item.innerHTML = `${i+1}. ❌ ${deck[i].q.substring(0,60)}...`;
+            unknownCount++;
+        }else{
+            item.innerHTML = `${i+1}. ⚪ Unmarked: ${deck[i].q.substring(0,60)}...`;
+            unmarkedCount++;
+        }
+        listEl.appendChild(item);
+    }
+
+    // Stats header
+    const stats = document.createElement("p");
+    stats.style.marginBottom="12px";
+    stats.innerHTML = `<strong>Stats:</strong> Known: ${knownCount} | Don't Know: ${unknownCount} | Unmarked: ${unmarkedCount}`;
+    listEl.prepend(stats);
+
+    document.getElementById("summaryPanel").style.display="block";
+}
+
+function closeSummary(){
+    document.getElementById("summaryPanel").style.display="none";
 }
 
 function nextCard(){
-
     if(currentCard<decks[currentDeck].length-1)
         currentCard++;
-
     updateCard();
-
 }
 
 function previousCard(){
-
     if(currentCard>0)
         currentCard--;
-
     updateCard();
-
 }
 
 function loadDeck(index){
-
     currentDeck=index;
     currentCard=0;
     updateCard();
-
 }
 
 updateCard();
