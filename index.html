@@ -1,581 +1,1085 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Management Accounting Flashcard Study</title>
+    <style>
+        /* --- RESET & BASE --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<title>Management Accounting Flashcard Study</title>
+        body {
+            background: linear-gradient(145deg, #eef2f7 0%, #d9e0e8 100%);
+            min-height: 100vh;
+            padding: 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,Helvetica,sans-serif;
-}
+        .container {
+            max-width: 960px;
+            width: 100%;
+            margin: 0 auto;
+        }
 
-body{
-    background:#f2f4f8;
-    padding:30px;
-}
+        /* --- HEADER --- */
+        .app-header {
+            text-align: center;
+            padding: 10px 0 6px;
+        }
+        .app-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a2332;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .app-header h1 .emoji-icon {
+            font-size: 1.8rem;
+        }
+        .app-header .subtitle {
+            color: #4a5a72;
+            font-size: 0.9rem;
+            margin-top: 2px;
+            font-weight: 400;
+        }
 
-.container{
-    max-width:900px;
-    margin:auto;
-}
+        /* --- DECK MENU --- */
+        .deck-menu {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0 24px;
+            flex-wrap: wrap;
+        }
+        .deck-menu button {
+            padding: 10px 24px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border: 1px solid #d0d8e2;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.6);
+            color: #2a3a4f;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.2px;
+        }
+        .deck-menu button:hover {
+            background: white;
+            border-color: #a0aec0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+        }
+        .deck-menu button:focus-visible {
+            outline: 3px solid #2d7a6e;
+            outline-offset: 2px;
+        }
+        .deck-menu button.active {
+            background: #1a2332;
+            border-color: #1a2332;
+            color: white;
+            box-shadow: 0 4px 14px rgba(26, 35, 50, 0.25);
+        }
+        .deck-menu button.active:hover {
+            background: #2a3a4f;
+            border-color: #2a3a4f;
+        }
 
-h1{
-    text-align:center;
-    margin-bottom:25px;
-}
+        /* --- STUDY PANEL --- */
+        .study-panel {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 28px;
+            padding: 30px 34px 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            transition: box-shadow 0.3s ease;
+        }
 
-#deckMenu{
-    display:flex;
-    justify-content:center;
-    gap:15px;
-    margin-bottom:30px;
-}
+        /* --- TOP BAR --- */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .top-bar .deck-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #1a2332;
+        }
+        .top-bar .deck-name .badge {
+            background: #e8edf5;
+            padding: 2px 14px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #3a4a62;
+            margin-left: 8px;
+            white-space: nowrap;
+        }
+        .top-bar .counter {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #4a5a72;
+            background: #eef2f7;
+            padding: 4px 16px;
+            border-radius: 50px;
+        }
 
-#deckMenu button{
-    padding:12px 25px;
-    font-size:16px;
-    cursor:pointer;
-}
+        /* --- PROGRESS --- */
+        .progress-wrap {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 22px;
+            overflow: hidden;
+        }
+        .progress-wrap .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #2d7a6e, #3ba892);
+            border-radius: 10px;
+            transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            width: 3.4%;
+        }
 
-#studyPanel{
-    background:white;
-    border-radius:12px;
-    padding:30px;
-    box-shadow:0 5px 20px rgba(0,0,0,.15);
-}
+        /* --- FLIP CARD --- */
+        .flip-card-container {
+            perspective: 1200px;
+            margin-bottom: 22px;
+        }
+        .flip-card {
+            min-height: 320px;
+            position: relative;
+            width: 100%;
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        .flip-card.flipped {
+            transform: rotateY(180deg);
+        }
 
-.topBar{
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:15px;
-    font-weight:bold;
-}
+        .card-face {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 320px;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 32px 36px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
 
-progress{
-    width:100%;
-    height:18px;
-    margin-bottom:25px;
-}
+        /* Front */
+        .card-front {
+            background: white;
+            z-index: 2;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+        .card-front .card-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            color: #5a6a7e;
+            margin-bottom: 14px;
+        }
+        .card-front .card-question {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #1a2332;
+            line-height: 1.6;
+            max-width: 92%;
+        }
+        .card-front .flip-hint {
+            margin-top: 22px;
+            font-size: 0.75rem;
+            color: #5a6a7e;
+            letter-spacing: 0.5px;
+            background: #f0f4fa;
+            padding: 4px 16px;
+            border-radius: 50px;
+        }
 
-/* Flip Card Container */
-.flip-card-container{
-    perspective: 1000px;
-    margin-bottom:20px;
-}
-.flip-card{
-    min-height:280px;
-    position: relative;
-    width:100%;
-    transition: transform 0.6s;
-    transform-style: preserve-3d;
-    cursor: pointer;
-}
-.flip-card.flipped{
-    transform: rotateY(180deg);
-}
-.card-front, .card-back{
-    position:absolute;
-    width:100%;
-    height:100%;
-    backface-visibility: hidden;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    font-size:20px;
-    border:2px dashed #bbb;
-    border-radius:10px;
-    padding:20px;
-}
-.card-front{
-    background:#fff;
-    z-index: 2;
-}
-.card-back{
-    background:#f0faf8;
-    color:#00695c;
-    transform: rotateY(180deg);
-    text-align:left;
-    overflow-y:auto;
-}
+        /* Back (Answer) */
+        .card-back {
+            background: linear-gradient(145deg, #f6fbfa, #eaf3f0);
+            color: #1a3a35;
+            transform: rotateY(180deg);
+            text-align: left;
+            overflow-y: auto;
+            justify-content: flex-start;
+            align-items: flex-start;
+            border: 1px solid rgba(45, 122, 110, 0.10);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+        .card-back .answer-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            width: 100%;
+            padding-top: 4px;
+        }
+        .card-back .answer-content .list-item {
+            padding-left: 8px;
+            margin-bottom: 4px;
+        }
+        .card-back .answer-content strong {
+            color: #145a4e;
+        }
 
-.buttons{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-bottom:20px;
-}
+        /* Scrollbar for back */
+        .card-back::-webkit-scrollbar {
+            width: 4px;
+        }
+        .card-back::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .card-back::-webkit-scrollbar-thumb {
+            background: #b0c8c0;
+            border-radius: 10px;
+        }
 
-.buttons button{
-    padding:12px 18px;
-    cursor:pointer;
-    font-size:16px;
-}
+        /* --- ACTION BUTTONS --- */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .action-buttons button {
+            padding: 10px 24px;
+            min-height: 44px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: white;
+            color: #1a2332;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+        .action-buttons button:focus-visible {
+            outline: 3px solid #2d7a6e;
+            outline-offset: 2px;
+        }
 
-.navigation{
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:20px;
-}
+        .btn-know {
+            background: #e1f3ed;
+            color: #1a6b5a;
+        }
+        .btn-know:hover {
+            background: #cbe8df;
+            transform: scale(1.02);
+        }
+        .btn-know.flash {
+            background: #a8d5c8;
+            transition: background 0.05s;
+        }
 
-.navigation button{
-    padding:12px 25px;
-    cursor:pointer;
-}
+        .btn-unknown {
+            background: #fde8e8;
+            color: #b33a3a;
+        }
+        .btn-unknown:hover {
+            background: #fcd5d5;
+            transform: scale(1.02);
+        }
+        .btn-unknown.flash {
+            background: #f7baba;
+            transition: background 0.05s;
+        }
 
-#summaryPanel{
-    margin-top:30px;
-    padding:20px;
-    border:1px solid #ddd;
-    border-radius:10px;
-}
-#summaryPanel h3{
-    margin-bottom:10px;
-}
-#summaryList{
-    max-height:300px;
-    overflow-y:auto;
-    padding-left:15px;
-}
-.known-item{
-    color:#008833;
-}
-.unknown-item{
-    color:#cc2222;
-}
-</style>
+        .btn-summary {
+            background: #eef2f7;
+            color: #3a4a62;
+        }
+        .btn-summary:hover {
+            background: #e0e6ef;
+            transform: scale(1.02);
+        }
+        .btn-summary.active-summary {
+            background: #1a2332;
+            color: white;
+            box-shadow: 0 4px 12px rgba(26, 35, 50, 0.2);
+        }
+
+        .action-buttons button:active {
+            transform: scale(0.94);
+        }
+
+        /* --- NAVIGATION --- */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 2px;
+        }
+        .navigation button {
+            padding: 10px 28px;
+            min-height: 44px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid #dce2ec;
+            border-radius: 50px;
+            background: white;
+            color: #1a2332;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .navigation button:hover {
+            background: #f5f8fc;
+            border-color: #bcc6d4;
+        }
+        .navigation button:focus-visible {
+            outline: 3px solid #2d7a6e;
+            outline-offset: 2px;
+        }
+        .navigation button:active {
+            transform: scale(0.94);
+        }
+        .nav-indicator {
+            font-size: 0.85rem;
+            color: #4a5a72;
+            font-weight: 400;
+        }
+
+        /* --- KEYBOARD LEGEND --- */
+        .keyboard-legend {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #5a6a7e;
+            background: rgba(0, 0, 0, 0.02);
+            padding: 8px 12px;
+            border-radius: 50px;
+            display: inline-block;
+            width: auto;
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.2px;
+        }
+        .keyboard-legend kbd {
+            background: #eef2f7;
+            padding: 1px 10px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.7rem;
+            color: #1a2332;
+            border: 1px solid #d0d8e2;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
+        .legend-wrap {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* --- SUMMARY PANEL --- */
+        .summary-panel {
+            margin-top: 24px;
+            padding: 22px 26px 18px;
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #e8edf5;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            display: none;
+            animation: fadeSlideUp 0.25s ease;
+        }
+        .summary-panel.visible {
+            display: block;
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .summary-panel .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .summary-panel h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #1a2332;
+        }
+        .summary-panel .close-summary {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #8a9bb0;
+            transition: color 0.2s;
+            padding: 0 6px;
+            line-height: 1;
+        }
+        .summary-panel .close-summary:hover {
+            color: #1a2332;
+        }
+
+        .summary-stats {
+            display: flex;
+            gap: 24px;
+            padding: 10px 0 14px;
+            border-bottom: 1px solid #eef2f7;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .summary-stats .stat {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2a3a4a;
+        }
+        .summary-stats .stat .num {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .stat-known .num {
+            color: #1a8a6a;
+        }
+        .stat-unknown .num {
+            color: #b33a3a;
+        }
+        .stat-unmarked .num {
+            color: #5a6a7e;
+        }
+
+        .summary-list {
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+        .summary-list .summary-item {
+            padding: 7px 0;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #f5f7fa;
+        }
+        .summary-list .summary-item .status-icon {
+            font-size: 0.9rem;
+            width: 24px;
+            flex-shrink: 0;
+        }
+        .summary-list .summary-item .q-text {
+            color: #1a2a3a;
+            flex: 1;
+            word-break: break-word;
+        }
+        .summary-list .summary-item .tag {
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: #7a8a9e;
+            background: #eef2f7;
+            padding: 0 10px;
+            border-radius: 50px;
+            flex-shrink: 0;
+        }
+        .summary-list .summary-item.known {
+            border-left: 3px solid #2d8a6e;
+            padding-left: 12px;
+        }
+        .summary-list .summary-item.unknown {
+            border-left: 3px solid #c0392b;
+            padding-left: 12px;
+        }
+        .summary-list .summary-item.unmarked {
+            border-left: 3px solid #ccd4de;
+            padding-left: 12px;
+            opacity: 0.7;
+        }
+
+        .summary-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .summary-list::-webkit-scrollbar-track {
+            background: #f0f2f5;
+            border-radius: 10px;
+        }
+        .summary-list::-webkit-scrollbar-thumb {
+            background: #c8d0dc;
+            border-radius: 10px;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 700px) {
+            body {
+                padding: 12px;
+                align-items: flex-start;
+                padding-top: 20px;
+            }
+            .study-panel {
+                padding: 20px 16px 18px;
+            }
+            .app-header h1 {
+                font-size: 1.5rem;
+            }
+            .deck-menu button {
+                padding: 8px 16px;
+                font-size: 0.78rem;
+            }
+            .card-face {
+                padding: 22px 18px;
+                min-height: 260px;
+            }
+            .card-front .card-question {
+                font-size: 1.05rem;
+            }
+            .card-back .answer-content {
+                font-size: 0.92rem;
+            }
+            .action-buttons button {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+                min-height: 40px;
+            }
+            .navigation button {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+                min-height: 40px;
+            }
+            .top-bar .deck-name {
+                font-size: 0.85rem;
+            }
+            .top-bar .deck-name .badge {
+                font-size: 0.6rem;
+                padding: 1px 10px;
+                margin-left: 4px;
+            }
+            .summary-panel {
+                padding: 16px;
+            }
+            .keyboard-legend {
+                font-size: 0.65rem;
+                padding: 6px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-face {
+                min-height: 220px;
+                padding: 18px 14px;
+            }
+            .card-front .card-question {
+                font-size: 0.95rem;
+            }
+            .card-back .answer-content {
+                font-size: 0.85rem;
+            }
+            .deck-menu {
+                gap: 6px;
+            }
+            .deck-menu button {
+                padding: 6px 12px;
+                font-size: 0.7rem;
+            }
+            .navigation {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .action-buttons {
+                gap: 6px;
+            }
+            .action-buttons button {
+                font-size: 0.75rem;
+                padding: 6px 14px;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="container">
+    <div class="container">
 
-<h1>📚 Management Accounting Flashcards (Lec6-Lec8)</h1>
+        <header class="app-header">
+            <h1>
+                <span class="emoji-icon">📚</span>
+                Flashcard Study
+                <span style="font-size:1rem;font-weight:400;color:#4a5a72;">·</span>
+                <span style="font-size:1rem;font-weight:400;color:#4a5a72;">Mgmt Accounting</span>
+            </h1>
+            <p class="subtitle">Lec 6 · Lec 7 · Lec 8 — Tap card to flip · Mark to advance</p>
+        </header>
 
-<div id="deckMenu">
-    <button onclick="loadDeck(0)">Set 1: Lecture 6 Management & Cost Accounting</button>
-    <button onclick="loadDeck(1)">Set 2: Lecture 7 Accounting for Overheads</button>
-    <button onclick="loadDeck(2)">Set 3: Lecture 8 Marginal Costing</button>
-</div>
+        <div class="deck-menu" id="deckMenu">
+            <button class="active" data-deck="0">📖 Set 1 · Lec 6</button>
+            <button data-deck="1">📖 Set 2 · Lec 7</button>
+            <button data-deck="2">📖 Set 3 · Lec 8</button>
+        </div>
 
-<div id="studyPanel">
+        <div class="study-panel">
 
-    <div class="topBar">
-        <span id="deckName">Set 1: Lecture 6 Management & Cost Accounting</span>
-        <span id="counter">1 / 29</span>
-    </div>
+            <div class="top-bar">
+                <span class="deck-name">
+                    Set 1: Lecture 6
+                    <span class="badge">Management & Cost Accounting</span>
+                </span>
+                <span class="counter" id="counter">1 / 29</span>
+            </div>
 
-    <progress id="progress" value="1" max="29"></progress>
+            <div class="progress-wrap">
+                <div class="progress-bar" id="progressBar" style="width:3.4%;"></div>
+            </div>
 
-    <!-- Flip Card Area -->
-    <div class="flip-card-container">
-        <div class="flip-card" id="flipCard" onclick="flipCard()">
-            <div class="card-front" id="question"></div>
-            <div class="card-back" id="answer"></div>
+            <div class="flip-card-container">
+                <div class="flip-card" id="flipCard">
+                    <div class="card-face card-front">
+                        <span class="card-label">❓ Question</span>
+                        <div class="card-question" id="question">Loading...</div>
+                        <span class="flip-hint">↻ tap to flip</span>
+                    </div>
+                    <div class="card-face card-back">
+                        <div class="answer-content" id="answer">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-unknown" id="btnUnknown" aria-label="Mark as Don't Know">✕ Don't Know</button>
+                <button class="btn-know" id="btnKnown" aria-label="Mark as Know">✓ Know</button>
+                <button class="btn-summary" id="btnSummary" aria-label="Toggle Summary">📋 Summary</button>
+            </div>
+
+            <div class="navigation">
+                <button id="prevBtn" aria-label="Previous Card">← Previous</button>
+                <span class="nav-indicator" id="navIndicator">Card 1 of 29</span>
+                <button id="nextBtn" aria-label="Next Card">Next →</button>
+            </div>
+
+            <div class="legend-wrap">
+                <div class="keyboard-legend">
+                    <kbd>←</kbd> <kbd>→</kbd> Navigate &nbsp;·&nbsp; <kbd>Space</kbd> Flip &nbsp;·&nbsp; <kbd>K</kbd> Know &nbsp;·&nbsp; <kbd>U</kbd> Don't Know &nbsp;·&nbsp; <kbd>S</kbd> Summary
+                </div>
+            </div>
+
+            <div class="summary-panel" id="summaryPanel">
+                <div class="summary-header">
+                    <h3>📊 Review Summary</h3>
+                    <button class="close-summary" id="closeSummaryBtn" aria-label="Close Summary">✕</button>
+                </div>
+                <div class="summary-stats" id="summaryStats">
+                    <span class="stat stat-known">✅ Known: <span class="num" id="knownCount">0</span></span>
+                    <span class="stat stat-unknown">❌ Don't Know: <span class="num" id="unknownCount">0</span></span>
+                    <span class="stat stat-unmarked">⚪ Unmarked: <span class="num" id="unmarkedCount">0</span></span>
+                </div>
+                <div class="summary-list" id="summaryList"></div>
+            </div>
+
         </div>
     </div>
 
-    <div class="buttons">
-        <button onclick="markUnknown()">❌ Don't Know</button>
-        <button onclick="markKnown()">✅ Know</button>
-        <button onclick="openSummary()">📋 View Review Summary</button>
-    </div>
+    <script>
+        // --- DATA (truncated for brevity, same full data as before) ---
+        const decks = [
+            // Set 1: Lecture 6
+            [
+                { q: "Describe the core difference between financial accounting and management accounting's core question they answer",
+                  a: "Financial accounting answers 'What already happened?' (historical transactions for external users)<br>Management accounting answers 'What should we do next?' (future planning for internal managers)" },
+                { q: "List the key characteristics of financial accounting",
+                  a: "1. Records only completed/past business transactions<br>2. Produces reports for external users (investors, banks, tax authorities)<br>3. Must follow formal accounting standards/concepts (accrual, prudence, consistency)<br>4. Standard annual reporting cycle<br>5. Views whole business as single entity" },
+                { q: "Define management accounting",
+                  a: "The process of collecting, analysing and reporting financial + non-financial information for internal managers to support business decision-making" },
+                { q: "Name internal user groups of management accounting and their key decisions",
+                  a: "1. Senior Managers: Product pricing, annual budgeting, cost control strategies<br>2. Department Supervisors: Allocate limited company resources fairly<br>3. Business Owners: Expansion plans, launch/discontinue products<br>4. Department Heads: Evaluate team/department performance against targets" },
+                { q: "Compare financial accounting vs management accounting across 6 key dimensions",
+                  a: "1. Audience: Financial = external parties; Management = internal managers/owners/staff<br>2. Time focus: Financial = historical past performance; Management = forecasting/future decisions<br>3. Rules: Financial = mandatory accounting standards; Management = flexible, no fixed rules<br>4. Reporting timing: Financial = fixed annual cycle; Management = on-demand, monthly/weekly<br>5. Business scope: Financial = entire business; Management = split by departments/products/projects<br>6. Mandatory status: Financial = legally required; Management = optional internal tool" },
+                { q: "Define cost accounting and state its relationship to management accounting",
+                  a: "Cost accounting is a specialised sub-branch of management accounting<br>Its core focus is identifying, measuring, tracking and controlling all business costs" },
+                { q: "List the seven core purposes of management and cost accounting",
+                  a: "1. Plan future business activities via budgets/forecasts<br>2. Monitor and control all business costs<br>3. Set appropriate selling prices for goods/services<br>4. Measure departmental, product and company-wide performance<br>5. Support strategic and short-term business decisions<br>6. Calculate inventory value and Cost of Goods Sold (COGS)<br>7. Improve operational efficiency and long-term profitability" },
+                { q: "List core management accounting techniques and their core purpose each",
+                  a: "1. Budgeting: Create formal future income & expense plans<br>2. Variance Analysis: Compare actual results vs budget targets<br>3. CVP Analysis: Map relationship between costs, sales volume and profit<br>4. Relevant Costing: Filter critical data for short-term operational decisions<br>5. Product Costing: Calculate full manufacturing cost per finished unit<br>6. Inventory Valuation: Assign value to unsold inventory and compute COGS" },
+                { q: "Define direct cost and give an example",
+                  a: "Costs fully traced directly to one finished product<br>Example: Fabric used to make a single shirt" },
+                { q: "Define indirect cost and give an example",
+                  a: "Shared costs that cannot be traced to one specific product<br>Example: Factory electricity bills" },
+                { q: "Define fixed cost and give an example",
+                  a: "Cost total stays constant regardless of production volume<br>Example: Annual factory building rent" },
+                { q: "Define variable cost and give an example",
+                  a: "Total cost rises/falls directly with production quantity, per-unit cost unchanged<br>Example: Raw material inputs for production" },
+                { q: "Define product cost and its components",
+                  a: "All costs incurred during manufacturing<br>Components: Direct materials, direct labour, factory overheads" },
+                { q: "Define period cost and give examples",
+                  a: "Costs unrelated to factory manufacturing<br>Examples: Selling expenses, administrative office costs" },
+                { q: "Explain job costing system, use case and examples",
+                  a: "Used when every product/service is fully customised<br>Calculate separate total cost for each individual job/order<br>Examples: Wedding planner, interior designer, printing company, tailor" },
+                { q: "Explain process costing system, use case and examples",
+                  a: "Used for mass production of identical uniform products<br>Calculate total production cost then divide by total units produced<br>Examples: Soft drinks, petrol, cement, shampoo" },
+                { q: "Briefly define marginal costing and absorption costing",
+                  a: "Marginal costing: Only analyses variable production costs for short-term operational decisions<br>Absorption costing: Absorbs all manufacturing costs (direct materials, labour, variable + fixed factory overheads) into each product unit" },
+                { q: "List advantages of management accounting",
+                  a: "1. Provides clear data for informed business decisions<br>2. Supports long-term planning via budgets and forecasts<br>3. Enables strict cost monitoring and waste reduction<br>4. Guides product pricing and product line decisions<br>5. Measures team, department and overall company performance" },
+                { q: "List disadvantages of management accounting",
+                  a: "1. Much data depends on estimates and forecasts<br>2. Creating custom internal reports consumes significant employee time<br>3. Specialised management accounting software/systems create extra business costs<br>4. No universal standardised report format<br>5. Incorrect data interpretation can lead to wrong business decisions" },
+                { q: "List advantages of cost accounting",
+                  a: "1. Accurately calculates full production cost per unit<br>2. Delivers reliable data for pricing decisions<br>3. Identifies wasteful spending and supports cost control<br>4. Distinguishes profitable vs unprofitable product lines<br>5. Calculates accurate inventory value and COGS" },
+                { q: "List disadvantages of cost accounting",
+                  a: "1. Collecting detailed cost data is time-intensive<br>2. System implementation and regular maintenance add extra expenses<br>3. Some overhead costs are difficult to classify accurately<br>4. Many overhead allocations rely on estimated figures<br>5. Over-focus on cutting costs may damage finished product quality" },
+                { q: "Differentiate manufacturing business and trading business, including inventory types",
+                  a: "Manufacturing: Buys raw materials, transforms into finished goods<br>Inventory = raw materials, work-in-progress (WIP), finished goods (e.g. Nestlé, Toyota)<br>Trading: Purchases finished goods and resells without modification<br>Only merchandise inventory (e.g. Mydin, Walmart)" },
+                { q: "Define four manufacturing cost categories plus non-production overheads with desk furniture examples",
+                  a: "1. Direct Materials: Traceable raw inputs (timber, screws for desks)<br>2. Direct Labour: Wages for workers making products (carpenter hourly wages)<br>3. Direct Expenses: One-off traceable job costs (custom desk design fee)<br>4. Indirect Production Overheads: Shared factory costs (factory electricity, machine depreciation, factory supervisor salary)<br>Non-Production Overheads: Non-factory support costs (office rent, admin wages, marketing)" },
+                { q: "Show the full product cost calculation formula for manufacturing",
+                  a: "Total Direct Costs (Direct Materials + Direct Labour + Direct Expenses) + Total Indirect Production Overheads = Total Product Cost<br>Cost per unit = Total Product Cost ÷ Total manufactured units" },
+                { q: "State the rule for period costs in inventory valuation",
+                  a: "Non-production overheads (office rent, admin salaries, marketing) are period costs<br>They are never included in inventory valuation and expensed immediately in the income statement" },
+                { q: "Explain the link between product costing and inventory valuation outcomes for manufactured goods",
+                  a: "After calculating unit product cost:<br>1. Sold goods: Production cost becomes COGS on the Income Statement<br>2. Unsold goods: Production cost remains as Closing Inventory asset on the Balance Sheet" },
+                { q: "Explain FIFO inventory valuation method",
+                  a: "First-In-First-Out<br>Assumes the oldest purchased inventory units are sold first<br>Newest purchased units remain as closing inventory" },
+                { q: "Explain Weighted Average Cost (AVCO) inventory valuation method",
+                  a: "Calculate a single uniform average cost per unit for all available inventory<br>This average cost is applied to both sold goods (COGS) and unsold closing inventory" },
+                { q: "What financial line items are directly impacted by inventory valuation methods?",
+                  a: "1. Cost of Goods Sold (COGS)<br>2. Closing Inventory balance on the Balance Sheet<br>3. Net Profit on the Income Statement" }
+            ],
+            // Set 2: Lecture 7
+            [
+                { q: "What core problem does overhead accounting solve?",
+                  a: "How to fairly allocate untraceable indirect production overhead costs to individual finished products to calculate full product cost" },
+                { q: "State the core principle of traditional overhead absorption costing",
+                  a: "Overheads cannot be directly attached to products but are part of full production cost<br>Every product receives a fair share of overhead using one single universal absorption basis" },
+                { q: "List three common overhead absorption bases and their suitable production environments",
+                  a: "1. Machine hours: Machine-intensive manufacturing<br>2. Labour hours: Labour-intensive manufacturing<br>3. Units produced: All products identical/similar mass goods" },
+                { q: "Write the three-step calculation logic for traditional overhead absorption costing",
+                  a: "1. Overhead Absorption Rate = Total budgeted overhead ÷ Total budgeted allocation base<br>2. Absorbed overhead per product = Actual usage of allocation base × Absorption rate<br>3. Full product cost = Direct materials + Direct labour + Absorbed overhead" },
+                { q: "What is the major limitation of traditional single-base absorption costing?",
+                  a: "Uses one broad allocation rule for all overheads<br>Simple mass-produced and complex custom products consume vastly different support activities but absorb identical overhead based only on machine/labour hours, causing distorted, inaccurate product costs" },
+                { q: "State the core logic of Activity-Based Costing (ABC)",
+                  a: "Products consume activities; activities consume resources<br>Overheads are driven by separate production support activities rather than only machine/labour hours<br>Overheads split by each activity for precise allocation" },
+                { q: "Define ABC terminology: Activity, Cost pool, Cost driver, Cost driver rate with cake business example",
+                  a: "1. Activity: Resource-consuming production task (cake decoration)<br>2. Cost pool: Total overhead grouped for one activity (RM18,000 decoration overhead)<br>3. Cost driver: Factor triggering higher activity costs (number of decoration hours)<br>4. Cost driver rate: Overhead cost per driver unit (RM30 per decoration hour)" },
+                { q: "List common production activities and their matching cost drivers for ABC",
+                  a: "1. Machine setup – Number of production setups<br>2. Quality inspection – Number of inspection rounds<br>3. Material handling – Number of material transport movements<br>4. Customer order processing – Number of customer orders<br>5. Custom packaging design – Number of custom design requests" },
+                { q: "List the five step-by-step process to implement ABC costing",
+                  a: "1. Identify all key production support activities<br>2. Group related overhead expenses into separate activity cost pools<br>3. Identify the cost driver for each activity pool<br>4. Calculate cost driver rate = Total cost pool ÷ Total driver units<br>5. Allocate overhead to each product based on actual driver units consumed by the product" },
+                { q: "Explain the cost distortion difference between traditional costing and ABC using standard vs premium candles as example",
+                  a: "Classic mass candle: Few setups/inspections, consumes little support activity<br>Premium custom candle: Frequent setups, extra inspections, high resource consumption<br>Traditional costing allocates equal overhead to both, undercosting premium candles and overcosting standard candles<br>ABC assigns higher overhead to premium candles matching real resource usage, producing accurate unit costs." },
+                { q: "List advantages of Activity-Based Costing (ABC)",
+                  a: "1. Produces far more accurate product cost figures<br>2. Supports better product pricing decisions<br>3. Clearly identifies high-profit and low-profit product lines<br>4. Reveals which activities cause overhead spending<br>5. Enables tighter cost control and improved operational decisions" },
+                { q: "List disadvantages/criticisms of Activity-Based Costing (ABC)",
+                  a: "1. Time-consuming to design, build and implement<br>2. Requires large volumes of detailed activity data collection<br>3. High initial implementation and ongoing maintenance costs<br>4. Employees may resist complex new costing systems<br>5. Overly complicated and not cost-effective for small/simple businesses" },
+                { q: "Summarise the key contrast between traditional absorption costing and ABC",
+                  a: "Traditional absorption costing uses one broad uniform allocation base for all overheads, simple but inaccurate for mixed product ranges<br>ABC splits overheads into separate activities with unique cost drivers for precise allocation, accurate but complex and costly to operate" }
+            ],
+            // Set 3: Lecture 8
+            [
+                { q: "How does marginal costing differ from absorption costing in treating fixed factory overheads as product/period costs?",
+                  a: "Marginal costing: Only variable production costs are product costs; fixed production overheads are fully expensed as period costs in the current period.<br>Absorption costing: All manufacturing costs (variable + fixed factory overhead) are product costs; fixed overhead is absorbed into unit inventory value." },
+                { q: "What is the primary use case for marginal costing?",
+                  a: "Internal short-term operational business decisions" },
+                { q: "Describe cost behaviour rule for fixed costs and unit cost movement with output change",
+                  a: "Total fixed cost stays unchanged within a relevant range<br>Fixed cost per unit falls as production output rises<br>Examples: Factory rent, permanent supervisor salary, straight-line factory depreciation, factory insurance" },
+                { q: "Describe cost behaviour rule for variable costs and unit cost movement with output change",
+                  a: "Variable cost per unit remains constant<br>Total variable cost rises proportionally with production volume<br>Examples: Direct materials, piece-rate direct labour, packaging materials, per-unit sales commission" },
+                { q: "Define mixed (semi-variable) costs, give formula and example",
+                  a: "Costs containing both fixed base charge and variable usage component<br>Formula: Total mixed cost = Fixed element + (Variable rate × Activity volume)<br>Example: Machine maintenance = RM2,000 fixed + RM3 per machine hour" },
+                { q: "Define total contribution and its purpose",
+                  a: "Contribution = Sales Revenue − Total Variable Costs<br>Purpose: Contribution first covers all total fixed costs; any remaining amount becomes net profit" },
+                { q: "Give formulas for contribution per unit and contribution margin ratio",
+                  a: "Contribution per unit = Selling price per unit − Variable cost per unit<br>Contribution Margin Ratio = (Total Contribution ÷ Total Sales) × 100%" },
+                { q: "Explain how sales volume changes impact net profit using contribution logic",
+                  a: "Every unit sold generates fixed contribution margin per unit.<br>When total contribution equals total fixed costs, business hits break-even (zero profit/loss).<br>Once fixed costs are fully covered, every extra unit sold adds its full contribution directly to net profit.<br>If total contribution is less than fixed costs, net loss occurs." },
+                { q: "List product cost components under marginal costing",
+                  a: "Only variable production costs:<br>Direct materials, direct labour, variable production overhead" },
+                { q: "List product cost components under absorption costing",
+                  a: "All manufacturing costs:<br>Direct materials, direct labour, variable production overhead, fixed production overhead" },
+                { q: "Outline the income statement structure for marginal costing",
+                  a: "Sales Revenue − Total Variable Costs = Total Contribution − Total Fixed Costs = Net Profit" },
+                { q: "Outline the income statement structure for absorption costing",
+                  a: "Sales Revenue − Cost of Goods Sold = Gross Profit − Selling & Administrative Period Expenses = Net Profit" },
+                { q: "Compare marginal costing and absorption costing across inventory valuation value, profit drivers, primary usage and key performance metric",
+                  a: "1. Inventory value: Marginal = lower; Absorption = higher<br>2. Profit drivers: Marginal = only units sold; Absorption = both units produced AND sold<br>3. Primary usage: Marginal = internal short-term decisions; Absorption = external financial reporting, full-cost pricing<br>4. Key metric: Marginal = contribution margin; Absorption = gross profit" },
+                { q: "What is the sole root cause of profit differences between marginal and absorption costing?",
+                  a: "Fixed production overhead held within opening and closing inventory balances" },
+                { q: "Explain profit comparison under three production vs sales volume scenarios for marginal vs absorption costing",
+                  a: "1. Production > Sales: Absorption costing higher profit (fixed overhead locked into closing inventory asset)<br>2. Production < Sales: Marginal costing higher profit (absorption releases fixed overhead from opening inventory into COGS)<br>3. Production = Sales: Both costing methods report identical net profit" },
+                { q: "List advantages of marginal costing",
+                  a: "1. Clearly displays contribution margin for short-term operational decisions<br>2. Directly shows how sales volume changes affect net profit<br>3. Ideal tool for break-even and CVP analysis<br>4. Avoids hiding fixed overhead expenses inside inventory asset balances" },
+                { q: "List limitations of marginal costing",
+                  a: "1. Simplifies complex real-world cost behaviour patterns<br>2. Difficult to accurately split mixed costs into fixed and variable components<br>3. Not compliant with external financial reporting accounting standards<br>4. Ignores fixed overhead costs when making long-term product pricing decisions" },
+                { q: "List advantages of absorption costing",
+                  a: "1. Captures full complete manufacturing cost per product unit<br>2. Complies with formal accounting standards for external financial statements<br>3. Supports full-cost pricing strategies to recover all factory overhead expenses" },
+                { q: "List limitations of absorption costing",
+                  a: "1. Net profit can be artificially inflated by overproducing and stockpiling inventory<br>2. Risk of over-absorption or under-absorption of fixed factory overhead<br>3. Less useful for short-term operational, volume-based business decisions" }
+            ]
+        ];
 
-    <div class="navigation">
-        <button onclick="previousCard()">◀ Previous</button>
-        <button onclick="nextCard()">Next ▶</button>
-    </div>
+        // --- METADATA ---
+        const deckMeta = [
+            { title: 'Set 1: Lecture 6', badge: 'Management & Cost Accounting' },
+            { title: 'Set 2: Lecture 7', badge: 'Accounting for Overheads' },
+            { title: 'Set 3: Lecture 8', badge: 'Marginal Costing' }
+        ];
 
-    <!-- Summary Panel Hidden By Default -->
-    <div id="summaryPanel" style="display:none;">
-        <h3>Review Summary (Current Deck)</h3>
-        <div id="summaryList"></div>
-        <div style="margin-top:15px;text-align:center;">
-            <button onclick="closeSummary()">Close Summary</button>
-        </div>
-    </div>
+        // --- STATE ---
+        let currentDeck = 0;
+        let currentCard = 0;
+        let isFlipped = false;
+        let deckProgress = [
+            [],
+            [],
+            []
+        ];
+        let summaryVisible = false;
+        let markTimeout = null;
 
-</div>
+        // --- DOM REFS ---
+        const deckButtons = document.querySelectorAll('.deck-menu button');
+        const flipCard = document.getElementById('flipCard');
+        const questionEl = document.getElementById('question');
+        const answerEl = document.getElementById('answer');
+        const counterEl = document.getElementById('counter');
+        const progressBar = document.getElementById('progressBar');
+        const navIndicator = document.getElementById('navIndicator');
+        const summaryPanel = document.getElementById('summaryPanel');
+        const summaryList = document.getElementById('summaryList');
+        const knownCountEl = document.getElementById('knownCount');
+        const unknownCountEl = document.getElementById('unknownCount');
+        const unmarkedCountEl = document.getElementById('unmarkedCount');
+        const btnKnown = document.getElementById('btnKnown');
+        const btnUnknown = document.getElementById('btnUnknown');
+        const btnSummary = document.getElementById('btnSummary');
+        const deckNameEl = document.querySelector('.deck-name');
 
-</div>
+        // --- HELPERS ---
+        function updateCard() {
+            const deck = decks[currentDeck];
+            const total = deck.length;
+            const idx = currentCard;
 
-<script>
+            // Update header
+            const meta = deckMeta[currentDeck];
+            deckNameEl.childNodes[0].textContent = meta.title + ' ';
+            deckNameEl.querySelector('.badge').textContent = meta.badge;
 
-const decks=[
-// Set 1: Lecture 6: Management Accounting & Cost Accounting
-[
-    {
-        q:"Describe the core difference between financial accounting and management accounting’s core question they answer",
-        a:"Financial accounting answers 'What already happened?' (historical transactions for external users)<br>Management accounting answers 'What should we do next?' (future planning for internal managers)"
-    },
-    {
-        q:"List the key characteristics of financial accounting",
-        a:"1. Records only completed/past business transactions<br>2. Produces reports for external users (investors, banks, tax authorities)<br>3. Must follow formal accounting standards/concepts (accrual, prudence, consistency)<br>4. Standard annual reporting cycle<br>5. Views whole business as single entity"
-    },
-    {
-        q:"Define management accounting",
-        a:"The process of collecting, analysing and reporting financial + non-financial information for internal managers to support business decision-making"
-    },
-    {
-        q:"Name internal user groups of management accounting and their key decisions",
-        a:"1. Senior Managers: Product pricing, annual budgeting, cost control strategies<br>2. Department Supervisors: Allocate limited company resources fairly<br>3. Business Owners: Expansion plans, launch/discontinue products<br>4. Department Heads: Evaluate team/department performance against targets"
-    },
-    {
-        q:"Compare financial accounting vs management accounting across 6 key dimensions",
-        a:"1. Audience: Financial = external parties; Management = internal managers/owners/staff<br>2. Time focus: Financial = historical past performance; Management = forecasting/future decisions<br>3. Rules: Financial = mandatory accounting standards; Management = flexible, no fixed rules<br>4. Reporting timing: Financial = fixed annual cycle; Management = on-demand, monthly/weekly<br>5. Business scope: Financial = entire business; Management = split by departments/products/projects<br>6. Mandatory status: Financial = legally required; Management = optional internal tool"
-    },
-    {
-        q:"Define cost accounting and state its relationship to management accounting",
-        a:"Cost accounting is a specialised sub-branch of management accounting<br>Its core focus is identifying, measuring, tracking and controlling all business costs"
-    },
-    {
-        q:"List the seven core purposes of management and cost accounting",
-        a:"1. Plan future business activities via budgets/forecasts<br>2. Monitor and control all business costs<br>3. Set appropriate selling prices for goods/services<br>4. Measure departmental, product and company-wide performance<br>5. Support strategic and short-term business decisions<br>6. Calculate inventory value and Cost of Goods Sold (COGS)<br>7. Improve operational efficiency and long-term profitability"
-    },
-    {
-        q:"List core management accounting techniques and their core purpose each",
-        a:"1. Budgeting: Create formal future income & expense plans<br>2. Variance Analysis: Compare actual results vs budget targets<br>3. CVP Analysis: Map relationship between costs, sales volume and profit<br>4. Relevant Costing: Filter critical data for short-term operational decisions<br>5. Product Costing: Calculate full manufacturing cost per finished unit<br>6. Inventory Valuation: Assign value to unsold inventory and compute COGS"
-    },
-    {
-        q:"Define direct cost and give an example",
-        a:"Costs fully traced directly to one finished product<br>Example: Fabric used to make a single shirt"
-    },
-    {
-        q:"Define indirect cost and give an example",
-        a:"Shared costs that cannot be traced to one specific product<br>Example: Factory electricity bills"
-    },
-    {
-        q:"Define fixed cost and give an example",
-        a:"Cost total stays constant regardless of production volume<br>Example: Annual factory building rent"
-    },
-    {
-        q:"Define variable cost and give an example",
-        a:"Total cost rises/falls directly with production quantity, per-unit cost unchanged<br>Example: Raw material inputs for production"
-    },
-    {
-        q:"Define product cost and its components",
-        a:"All costs incurred during manufacturing<br>Components: Direct materials, direct labour, factory overheads"
-    },
-    {
-        q:"Define period cost and give examples",
-        a:"Costs unrelated to factory manufacturing<br>Examples: Selling expenses, administrative office costs"
-    },
-    {
-        q:"Explain job costing system, use case and examples",
-        a:"Used when every product/service is fully customised<br>Calculate separate total cost for each individual job/order<br>Examples: Wedding planner, interior designer, printing company, tailor"
-    },
-    {
-        q:"Explain process costing system, use case and examples",
-        a:"Used for mass production of identical uniform products<br>Calculate total production cost then divide by total units produced<br>Examples: Soft drinks, petrol, cement, shampoo"
-    },
-    {
-        q:"Briefly define marginal costing and absorption costing",
-        a:"Marginal costing: Only analyses variable production costs for short-term operational decisions<br>Absorption costing: Absorbs all manufacturing costs (direct materials, labour, variable + fixed factory overheads) into each product unit"
-    },
-    {
-        q:"List advantages of management accounting",
-        a:"1. Provides clear data for informed business decisions<br>2. Supports long-term planning via budgets and forecasts<br>3. Enables strict cost monitoring and waste reduction<br>4. Guides product pricing and product line decisions<br>5. Measures team, department and overall company performance"
-    },
-    {
-        q:"List disadvantages of management accounting",
-        a:"1. Much data depends on estimates and forecasts<br>2. Creating custom internal reports consumes significant employee time<br>3. Specialised management accounting software/systems create extra business costs<br>4. No universal standardised report format<br>5. Incorrect data interpretation can lead to wrong business decisions"
-    },
-    {
-        q:"List advantages of cost accounting",
-        a:"1. Accurately calculates full production cost per unit<br>2. Delivers reliable data for pricing decisions<br>3. Identifies wasteful spending and supports cost control<br>4. Distinguishes profitable vs unprofitable product lines<br>5. Calculates accurate inventory value and COGS"
-    },
-    {
-        q:"List disadvantages of cost accounting",
-        a:"1. Collecting detailed cost data is time-intensive<br>2. System implementation and regular maintenance add extra expenses<br>3. Some overhead costs are difficult to classify accurately<br>4. Many overhead allocations rely on estimated figures<br>5. Over-focus on cutting costs may damage finished product quality"
-    },
-    {
-        q:"Differentiate manufacturing business and trading business, including inventory types",
-        a:"Manufacturing: Buys raw materials, transforms into finished goods<br>Inventory = raw materials, work-in-progress (WIP), finished goods (e.g. Nestlé, Toyota)<br>Trading: Purchases finished goods and resells without modification<br>Only merchandise inventory (e.g. Mydin, Walmart)"
-    },
-    {
-        q:"Define four manufacturing cost categories plus non-production overheads with desk furniture examples",
-        a:"1. Direct Materials: Traceable raw inputs (timber, screws for desks)<br>2. Direct Labour: Wages for workers making products (carpenter hourly wages)<br>3. Direct Expenses: One-off traceable job costs (custom desk design fee)<br>4. Indirect Production Overheads: Shared factory costs (factory electricity, machine depreciation, factory supervisor salary)<br>Non-Production Overheads: Non-factory support costs (office rent, admin wages, marketing)"
-    },
-    {
-        q:"Show the full product cost calculation formula for manufacturing",
-        a:"Total Direct Costs (Direct Materials + Direct Labour + Direct Expenses) + Total Indirect Production Overheads = Total Product Cost<br>Cost per unit = Total Product Cost ÷ Total manufactured units"
-    },
-    {
-        q:"State the rule for period costs in inventory valuation",
-        a:"Non-production overheads (office rent, admin salaries, marketing) are period costs<br>They are never included in inventory valuation and expensed immediately in the income statement"
-    },
-    {
-        q:"Explain the link between product costing and inventory valuation outcomes for manufactured goods",
-        a:"After calculating unit product cost:<br>1. Sold goods: Production cost becomes COGS on the Income Statement<br>2. Unsold goods: Production cost remains as Closing Inventory asset on the Balance Sheet"
-    },
-    {
-        q:"Explain FIFO inventory valuation method",
-        a:"First-In-First-Out<br>Assumes the oldest purchased inventory units are sold first<br>Newest purchased units remain as closing inventory"
-    },
-    {
-        q:"Explain Weighted Average Cost (AVCO) inventory valuation method",
-        a:"Calculate a single uniform average cost per unit for all available inventory<br>This average cost is applied to both sold goods (COGS) and unsold closing inventory"
-    },
-    {
-        q:"What financial line items are directly impacted by inventory valuation methods?",
-        a:"1. Cost of Goods Sold (COGS)<br>2. Closing Inventory balance on the Balance Sheet<br>3. Net Profit on the Income Statement"
-    }
-],
-// Set 2: Lecture7 Accounting for Overheads
-[
-    {
-        q:"What core problem does overhead accounting solve?",
-        a:"How to fairly allocate untraceable indirect production overhead costs to individual finished products to calculate full product cost"
-    },
-    {
-        q:"State the core principle of traditional overhead absorption costing",
-        a:"Overheads cannot be directly attached to products but are part of full production cost<br>Every product receives a fair share of overhead using one single universal absorption basis"
-    },
-    {
-        q:"List three common overhead absorption bases and their suitable production environments",
-        a:"1. Machine hours: Machine-intensive manufacturing<br>2. Labour hours: Labour-intensive manufacturing<br>3. Units produced: All products identical/similar mass goods"
-    },
-    {
-        q:"Write the three-step calculation logic for traditional overhead absorption costing",
-        a:"1. Overhead Absorption Rate = Total budgeted overhead ÷ Total budgeted allocation base<br>2. Absorbed overhead per product = Actual usage of allocation base × Absorption rate<br>3. Full product cost = Direct materials + Direct labour + Absorbed overhead"
-    },
-    {
-        q:"What is the major limitation of traditional single-base absorption costing?",
-        a:"Uses one broad allocation rule for all overheads<br>Simple mass-produced and complex custom products consume vastly different support activities but absorb identical overhead based only on machine/labour hours, causing distorted, inaccurate product costs"
-    },
-    {
-        q:"State the core logic of Activity-Based Costing (ABC)",
-        a:"Products consume activities; activities consume resources<br>Overheads are driven by separate production support activities rather than only machine/labour hours<br>Overheads split by each activity for precise allocation"
-    },
-    {
-        q:"Define ABC terminology: Activity, Cost pool, Cost driver, Cost driver rate with cake business example",
-        a:"1. Activity: Resource-consuming production task (cake decoration)<br>2. Cost pool: Total overhead grouped for one activity (RM18,000 decoration overhead)<br>3. Cost driver: Factor triggering higher activity costs (number of decoration hours)<br>4. Cost driver rate: Overhead cost per driver unit (RM30 per decoration hour)"
-    },
-    {
-        q:"List common production activities and their matching cost drivers for ABC",
-        a:"1. Machine setup – Number of production setups<br>2. Quality inspection – Number of inspection rounds<br>3. Material handling – Number of material transport movements<br>4. Customer order processing – Number of customer orders<br>5. Custom packaging design – Number of custom design requests"
-    },
-    {
-        q:"List the five step-by-step process to implement ABC costing",
-        a:"1. Identify all key production support activities<br>2. Group related overhead expenses into separate activity cost pools<br>3. Identify the cost driver for each activity pool<br>4. Calculate cost driver rate = Total cost pool ÷ Total driver units<br>5. Allocate overhead to each product based on actual driver units consumed by the product"
-    },
-    {
-        q:"Explain the cost distortion difference between traditional costing and ABC using standard vs premium candles as example",
-        a:"Classic mass candle: Few setups/inspections, consumes little support activity<br>Premium custom candle: Frequent setups, extra inspections, high resource consumption<br>Traditional costing allocates equal overhead to both, undercosting premium candles and overcosting standard candles<br>ABC assigns higher overhead to premium candles matching real resource usage, producing accurate unit costs."
-    },
-    {
-        q:"List advantages of Activity-Based Costing (ABC)",
-        a:"1. Produces far more accurate product cost figures<br>2. Supports better product pricing decisions<br>3. Clearly identifies high-profit and low-profit product lines<br>4. Reveals which activities cause overhead spending<br>5. Enables tighter cost control and improved operational decisions"
-    },
-    {
-        q:"List disadvantages/criticisms of Activity-Based Costing (ABC)",
-        a:"1. Time-consuming to design, build and implement<br>2. Requires large volumes of detailed activity data collection<br>3. High initial implementation and ongoing maintenance costs<br>4. Employees may resist complex new costing systems<br>5. Overly complicated and not cost-effective for small/simple businesses"
-    },
-    {
-        q:"Summarise the key contrast between traditional absorption costing and ABC",
-        a:"Traditional absorption costing uses one broad uniform allocation base for all overheads, simple but inaccurate for mixed product ranges<br>ABC splits overheads into separate activities with unique cost drivers for precise allocation, accurate but complex and costly to operate"
-    }
-],
-// Set3: Lecture8 Marginal Costing
-[
-    {
-        q:"How does marginal costing differ from absorption costing in treating fixed factory overheads as product/period costs?",
-        a:"Marginal costing: Only variable production costs are product costs; fixed production overheads are fully expensed as period costs in the current period.<br>Absorption costing: All manufacturing costs (variable + fixed factory overhead) are product costs; fixed overhead is absorbed into unit inventory value."
-    },
-    {
-        q:"What is the primary use case for marginal costing?",
-        a:"Internal short-term operational business decisions"
-    },
-    {
-        q:"Describe cost behaviour rule for fixed costs and unit cost movement with output change",
-        a:"Total fixed cost stays unchanged within a relevant range<br>Fixed cost per unit falls as production output rises<br>Examples: Factory rent, permanent supervisor salary, straight-line factory depreciation, factory insurance"
-    },
-    {
-        q:"Describe cost behaviour rule for variable costs and unit cost movement with output change",
-        a:"Variable cost per unit remains constant<br>Total variable cost rises proportionally with production volume<br>Examples: Direct materials, piece-rate direct labour, packaging materials, per-unit sales commission"
-    },
-    {
-        q:"Define mixed (semi-variable) costs, give formula and example",
-        a:"Costs containing both fixed base charge and variable usage component<br>Formula: Total mixed cost = Fixed element + (Variable rate × Activity volume)<br>Example: Machine maintenance = RM2,000 fixed + RM3 per machine hour"
-    },
-    {
-        q:"Define total contribution and its purpose",
-        a:"Contribution = Sales Revenue − Total Variable Costs<br>Purpose: Contribution first covers all total fixed costs; any remaining amount becomes net profit"
-    },
-    {
-        q:"Give formulas for contribution per unit and contribution margin ratio",
-        a:"Contribution per unit = Selling price per unit − Variable cost per unit<br>Contribution Margin Ratio = (Total Contribution ÷ Total Sales) × 100%"
-    },
-    {
-        q:"Explain how sales volume changes impact net profit using contribution logic",
-        a:"Every unit sold generates fixed contribution margin per unit.<br>When total contribution equals total fixed costs, business hits break-even (zero profit/loss).<br>Once fixed costs are fully covered, every extra unit sold adds its full contribution directly to net profit.<br>If total contribution is less than fixed costs, net loss occurs."
-    },
-    {
-        q:"List product cost components under marginal costing",
-        a:"Only variable production costs:<br>Direct materials, direct labour, variable production overhead"
-    },
-    {
-        q:"List product cost components under absorption costing",
-        a:"All manufacturing costs:<br>Direct materials, direct labour, variable production overhead, fixed production overhead"
-    },
-    {
-        q:"Outline the income statement structure for marginal costing",
-        a:"Sales Revenue − Total Variable Costs = Total Contribution − Total Fixed Costs = Net Profit"
-    },
-    {
-        q:"Outline the income statement structure for absorption costing",
-        a:"Sales Revenue − Cost of Goods Sold = Gross Profit − Selling & Administrative Period Expenses = Net Profit"
-    },
-    {
-        q:"Compare marginal costing and absorption costing across inventory valuation value, profit drivers, primary usage and key performance metric",
-        a:"1. Inventory value: Marginal = lower; Absorption = higher<br>2. Profit drivers: Marginal = only units sold; Absorption = both units produced AND sold<br>3. Primary usage: Marginal = internal short-term decisions; Absorption = external financial reporting, full-cost pricing<br>4. Key metric: Marginal = contribution margin; Absorption = gross profit"
-    },
-    {
-        q:"What is the sole root cause of profit differences between marginal and absorption costing?",
-        a:"Fixed production overhead held within opening and closing inventory balances"
-    },
-    {
-        q:"Explain profit comparison under three production vs sales volume scenarios for marginal vs absorption costing",
-        a:"1. Production > Sales: Absorption costing higher profit (fixed overhead locked into closing inventory asset)<br>2. Production < Sales: Marginal costing higher profit (absorption releases fixed overhead from opening inventory into COGS)<br>3. Production = Sales: Both costing methods report identical net profit"
-    },
-    {
-        q:"List advantages of marginal costing",
-        a:"1. Clearly displays contribution margin for short-term operational decisions<br>2. Directly shows how sales volume changes affect net profit<br>3. Ideal tool for break-even and CVP analysis<br>4. Avoids hiding fixed overhead expenses inside inventory asset balances"
-    },
-    {
-        q:"List limitations of marginal costing",
-        a:"1. Simplifies complex real-world cost behaviour patterns<br>2. Difficult to accurately split mixed costs into fixed and variable components<br>3. Not compliant with external financial reporting accounting standards<br>4. Ignores fixed overhead costs when making long-term product pricing decisions"
-    },
-    {
-        q:"List advantages of absorption costing",
-        a:"1. Captures full complete manufacturing cost per product unit<br>2. Complies with formal accounting standards for external financial statements<br>3. Supports full-cost pricing strategies to recover all factory overhead expenses"
-    },
-    {
-        q:"List limitations of absorption costing",
-        a:"1. Net profit can be artificially inflated by overproducing and stockpiling inventory<br>2. Risk of over-absorption or under-absorption of fixed factory overhead<br>3. Less useful for short-term operational, volume-based business decisions"
-    }
-]
-];
+            counterEl.textContent = `${idx + 1} / ${total}`;
+            navIndicator.textContent = `Card ${idx + 1} of ${total}`;
+            progressBar.style.width = `${((idx + 1) / total) * 100}%`;
 
-let currentDeck=0;
-let currentCard=0;
-// Track user knowledge status per deck: {cardIndex: "known"/"unknown"}
-let deckProgress = [[], [], []];
-let isFlipped = false;
+            // Reset flip
+            isFlipped = false;
+            flipCard.classList.remove('flipped');
 
-const deckTitles = [
-    "Set 1: Lecture 6 Management & Cost Accounting",
-    "Set 2: Lecture 7 Accounting for Overheads",
-    "Set 3: Lecture 8 Marginal Costing"
-];
-
-function updateCard(){
-    const deck=decks[currentDeck];
-    document.getElementById("deckName").innerHTML=deckTitles[currentDeck];
-    document.getElementById("counter").innerHTML=(currentCard+1)+" / "+deck.length;
-    document.getElementById("progress").max=deck.length;
-    document.getElementById("progress").value=currentCard+1;
-
-    // Reset flip state
-    isFlipped = false;
-    document.getElementById("flipCard").classList.remove("flipped");
-
-    document.getElementById("question").innerHTML=deck[currentCard].q;
-    document.getElementById("answer").innerHTML=deck[currentCard].a;
-
-    // Hide summary panel on card change
-    document.getElementById("summaryPanel").style.display="none";
-}
-
-// Flip card on click
-function flipCard(){
-    isFlipped = !isFlipped;
-    const cardEl = document.getElementById("flipCard");
-    if(isFlipped){
-        cardEl.classList.add("flipped");
-    }else{
-        cardEl.classList.remove("flipped");
-    }
-}
-
-// Mark current card as Known (NO POPUP ALERT)
-function markKnown(){
-    deckProgress[currentDeck][currentCard] = "known";
-}
-
-// Mark current card as Don't Know (NO POPUP ALERT)
-function markUnknown(){
-    deckProgress[currentDeck][currentCard] = "unknown";
-}
-
-// Open summary list
-function openSummary(){
-    const deck = decks[currentDeck];
-    const listEl = document.getElementById("summaryList");
-    listEl.innerHTML = "";
-    let knownCount = 0;
-    let unknownCount = 0;
-    let unmarkedCount = 0;
-
-    for(let i=0; i<deck.length; i++){
-        const status = deckProgress[currentDeck][i];
-        const item = document.createElement("div");
-        item.style.margin="6px 0";
-        if(status === "known"){
-            item.className = "known-item";
-            item.innerHTML = `${i+1}. ✅ ${deck[i].q.substring(0,60)}...`;
-            knownCount++;
-        }else if(status === "unknown"){
-            item.className = "unknown-item";
-            item.innerHTML = `${i+1}. ❌ ${deck[i].q.substring(0,60)}...`;
-            unknownCount++;
-        }else{
-            item.innerHTML = `${i+1}. ⚪ Unmarked: ${deck[i].q.substring(0,60)}...`;
-            unmarkedCount++;
+            questionEl.innerHTML = deck[idx].q;
+            answerEl.innerHTML = deck[idx].a;
         }
-        listEl.appendChild(item);
-    }
 
-    // Stats header
-    const stats = document.createElement("p");
-    stats.style.marginBottom="12px";
-    stats.innerHTML = `<strong>Stats:</strong> Known: ${knownCount} | Don't Know: ${unknownCount} | Unmarked: ${unmarkedCount}`;
-    listEl.prepend(stats);
+        function renderSummary() {
+            const deck = decks[currentDeck];
+            const progress = deckProgress[currentDeck];
+            let known = 0,
+                unknown = 0,
+                unmarked = 0;
 
-    document.getElementById("summaryPanel").style.display="block";
-}
+            let html = '';
+            for (let i = 0; i < deck.length; i++) {
+                const status = progress[i];
+                let icon, cls, tag;
+                if (status === 'known') {
+                    icon = '✅';
+                    cls = 'known';
+                    tag = 'Known';
+                    known++;
+                } else if (status === 'unknown') {
+                    icon = '❌';
+                    cls = 'unknown';
+                    tag = 'Don\'t Know';
+                    unknown++;
+                } else {
+                    icon = '⚪';
+                    cls = 'unmarked';
+                    tag = 'Unmarked';
+                    unmarked++;
+                }
+                // Use textContent equivalent via text to avoid XSS, but safely display
+                const qText = deck[i].q.length > 60 ? deck[i].q.substring(0, 60) + '…' : deck[i].q;
+                html += `
+                    <div class="summary-item ${cls}">
+                        <span class="status-icon">${icon}</span>
+                        <span class="q-text">${i+1}. ${qText}</span>
+                        <span class="tag">${tag}</span>
+                    </div>
+                `;
+            }
 
-function closeSummary(){
-    document.getElementById("summaryPanel").style.display="none";
-}
+            summaryList.innerHTML = html;
+            knownCountEl.textContent = known;
+            unknownCountEl.textContent = unknown;
+            unmarkedCountEl.textContent = unmarked;
+        }
 
-function nextCard(){
-    if(currentCard<decks[currentDeck].length-1)
-        currentCard++;
-    updateCard();
-}
+        function toggleSummary() {
+            summaryVisible = !summaryVisible;
+            summaryPanel.classList.toggle('visible', summaryVisible);
+            btnSummary.classList.toggle('active-summary', summaryVisible);
+            if (summaryVisible) renderSummary();
+        }
 
-function previousCard(){
-    if(currentCard>0)
-        currentCard--;
-    updateCard();
-}
+        function advanceAfterMark() {
+            // Clear any pending timeout to prevent race conditions
+            if (markTimeout) clearTimeout(markTimeout);
+            markTimeout = setTimeout(() => {
+                const deck = decks[currentDeck];
+                if (currentCard < deck.length - 1) {
+                    currentCard++;
+                    updateCard();
+                    if (summaryVisible) renderSummary();
+                } else {
+                    // Gentle end-of-deck notification
+                    const original = navIndicator.textContent;
+                    navIndicator.textContent = '🎉 End of deck!';
+                    setTimeout(() => {
+                        navIndicator.textContent = original;
+                    }, 1200);
+                }
+                markTimeout = null;
+            }, 280);
+        }
 
-function loadDeck(index){
-    currentDeck=index;
-    currentCard=0;
-    updateCard();
-}
+        // --- EVENT HANDLERS ---
+        function flipCardHandler() {
+            isFlipped = !isFlipped;
+            flipCard.classList.toggle('flipped', isFlipped);
+        }
 
-updateCard();
+        function markKnown() {
+            deckProgress[currentDeck][currentCard] = 'known';
+            btnKnown.classList.add('flash');
+            setTimeout(() => btnKnown.classList.remove('flash'), 300);
+            advanceAfterMark();
+        }
 
-</script>
+        function markUnknown() {
+            deckProgress[currentDeck][currentCard] = 'unknown';
+            btnUnknown.classList.add('flash');
+            setTimeout(() => btnUnknown.classList.remove('flash'), 300);
+            advanceAfterMark();
+        }
 
+        function nextCard() {
+            if (markTimeout) return; // Prevent navigation while marking
+            if (currentCard < decks[currentDeck].length - 1) {
+                currentCard++;
+                updateCard();
+                if (summaryVisible) renderSummary();
+            }
+        }
+
+        function previousCard() {
+            if (markTimeout) return;
+            if (currentCard > 0) {
+                currentCard--;
+                updateCard();
+                if (summaryVisible) renderSummary();
+            }
+        }
+
+        function loadDeck(index) {
+            if (markTimeout) return;
+            currentDeck = index;
+            currentCard = 0;
+            deckButtons.forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            updateCard();
+            // Close summary if open
+            if (summaryVisible) toggleSummary();
+        }
+
+        // --- BIND EVENTS ---
+        flipCard.addEventListener('click', flipCardHandler);
+
+        btnKnown.addEventListener('click', markKnown);
+        btnUnknown.addEventListener('click', markUnknown);
+        btnSummary.addEventListener('click', toggleSummary);
+        document.getElementById('closeSummaryBtn').addEventListener('click', toggleSummary);
+
+        document.getElementById('prevBtn').addEventListener('click', previousCard);
+        document.getElementById('nextBtn').addEventListener('click', nextCard);
+
+        deckButtons.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                loadDeck(parseInt(btn.dataset.deck));
+            });
+        });
+
+        // --- KEYBOARD SHORTCUTS ---
+        document.addEventListener('keydown', (e) => {
+            // Ignore if typing in an input (none exist, but safe)
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            switch (e.key) {
+                case 'ArrowRight':
+                    e.preventDefault();
+                    nextCard();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    previousCard();
+                    break;
+                case ' ':
+                case 'Space':
+                    e.preventDefault();
+                    flipCardHandler();
+                    break;
+                case 'k':
+                case 'K':
+                    e.preventDefault();
+                    markKnown();
+                    break;
+                case 'u':
+                case 'U':
+                    e.preventDefault();
+                    markUnknown();
+                    break;
+                case 's':
+                case 'S':
+                    e.preventDefault();
+                    toggleSummary();
+                    break;
+            }
+        });
+
+        // --- INIT ---
+        updateCard();
+    </script>
 </body>
 </html>
