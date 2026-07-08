@@ -504,16 +504,14 @@ function flipCard(){
     }
 }
 
-// Mark current card as Known
+// Mark current card as Known (NO POPUP ALERT)
 function markKnown(){
     deckProgress[currentDeck][currentCard] = "known";
-    alert("Marked as ✅ Know");
 }
 
-// Mark current card as Don't Know
+// Mark current card as Don't Know (NO POPUP ALERT)
 function markUnknown(){
     deckProgress[currentDeck][currentCard] = "unknown";
-    alert("Marked as ❌ Don't Know");
 }
 
 // Open summary list
